@@ -31,6 +31,13 @@ EMAIL_HOST_PASSWORD = config("SENDGRID_PASSWORD")
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
+# Github
+GITHUB_CLIENT_ID = config("GITHUB_CLIENT_ID", "")
+GITHUB_CLIENT_SECRET = config("GITHUB_CLIENT_SECRET", "")
+GITHUB_REDIRECT_URI = config("GITHUB_REDIRECT_URI", "")
+GITHUB_SCOPES = "user, repo"
+GITHUB_ACCEPT_TYPE = 'application/json'
+
 # Security
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = True
@@ -79,7 +86,7 @@ LOGGING = {
         },
     },
     "handlers": {
-        "null": {"class": "logging.NullHandler",},
+        "null": {"class": "logging.NullHandler", },
         "mail_admins": {
             "level": "ERROR",
             "class": "django.utils.log.AdminEmailHandler",
@@ -94,8 +101,8 @@ LOGGING = {
     },
     "loggers": {
         "": {"handlers": ["console"], "level": "INFO"},
-        "django.security.DisallowedHost": {"handlers": ["null"], "propagate": False,},
-        "django.request": {"handlers": ["mail_admins"], "level": "ERROR", "propagate": True,},
+        "django.security.DisallowedHost": {"handlers": ["null"], "propagate": False, },
+        "django.request": {"handlers": ["mail_admins"], "level": "ERROR", "propagate": True, },
         "log_request_id.middleware": {
             "handlers": ["console"],
             "level": "DEBUG",
@@ -107,4 +114,5 @@ LOGGING = {
 JS_REVERSE_EXCLUDE_NAMESPACES = ["admin"]
 
 # Sentry
-sentry_sdk.init(dsn=SENTRY_DSN, integrations=[DjangoIntegration()], release=COMMIT_SHA)
+sentry_sdk.init(dsn=SENTRY_DSN, integrations=[
+                DjangoIntegration()], release=COMMIT_SHA)
