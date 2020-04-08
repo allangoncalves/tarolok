@@ -31,7 +31,7 @@ AUTHENTICATION_BACKENDS = [
 
 PROFILE_DATA_URL = 'https://api.github.com/user'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['tarolok.herokuapp.com']
 
 INSTALLED_APPS = [
     "exampleapp.apps.ExampleappConfig",
@@ -109,7 +109,7 @@ WEBPACK_LOADER = {
         "STATS_FILE": base_dir_join("../webpack-stats.json"),
         "POLL_INTERVAL": 0.1,
         "IGNORE": [".+\.hot-update.js", ".+\.map"],
-        }
+    }
 }
 
 # Celery
