@@ -53,7 +53,7 @@ class RepositoryViewSet(viewsets.ModelViewSet):
     serializer_class = RepositorySerializer
 
     def create(self, request, watcher_pk=None, **kwargs):
-        full_name = request.POST['full_name']
+        full_name = request.data['full_name']
         watcher = Watcher.objects.get(username=watcher_pk)
         repository, created = Repository.objects.get_or_create(
             full_name=full_name)
