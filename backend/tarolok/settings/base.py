@@ -29,7 +29,7 @@ AUTHENTICATION_BACKENDS = [
     'github_oauth.authentication.GithubOAuthentication',
 ]
 
-ALLOWED_HOSTS = ['cf773485.ngrok.io', 'localhost']
+ALLOWED_HOSTS = ['tarolok.herokuapp.com']
 
 INSTALLED_APPS = [
     "exampleapp.apps.ExampleappConfig",
