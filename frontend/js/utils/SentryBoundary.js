@@ -1,13 +1,14 @@
 import * as Sentry from '@sentry/browser';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { Button } from '@material-ui/core';
 
 const FallbackUI = ({ eventId }) => (
   <>
     <h3>Check if there is an error on your Sentry app</h3>
-    <button type="button" onClick={() => Sentry.showReportDialog({ eventId })}>
+    <Button color="primary" onClick={() => Sentry.showReportDialog({ eventId })}>
       Report feedback
-    </button>
+    </Button>
   </>
 );
 
