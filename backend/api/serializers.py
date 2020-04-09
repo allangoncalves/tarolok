@@ -12,7 +12,7 @@ class CommitSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Commit
-        exclude = ('repo',)
+        fields = "__all__"
 
 
 class RepositorySerializer(serializers.ModelSerializer):
