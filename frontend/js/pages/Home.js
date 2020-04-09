@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
 const watcher = 'allangoncalves';
 
 const Home = () => {
+  const [currentUser, setCurrentUser] = useState(null);
   const [showBugComponent, setShowBugComponent] = useState(false);
   const [trueOrFalse, setTrueOrFalse] = useState(false);
   const [nextPage, setNextPage] = useState(null);
@@ -35,7 +36,6 @@ const Home = () => {
 
   const getCommits = (watcher) => {
     api.get(`watchers/${watcher}/commits/`).then((res) => {
-      console.log(res.headers);
       setCommits(res.data.results);
     });
   };
@@ -48,6 +48,7 @@ const Home = () => {
     });
   };
   useEffect(() => {
+    setCurrentUser(window.$user);
     getCommits(watcher);
   }, []);
 

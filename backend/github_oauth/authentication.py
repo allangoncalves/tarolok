@@ -12,7 +12,6 @@ class GithubOAuthentication(RemoteUserBackend):
 
     def authenticate(self, request, **kwargs):
         code = kwargs.get("code", "")
-        print(code)
         payload = {'code': code, 'client_id': conf.CLIENT_ID, 'client_secret': conf.CLIENT_SECRET,
                    'redirect_uri': conf.REDIRECT_URI}
         headers = {'Accept': conf.ACCEPT_TYPE}
@@ -25,17 +24,15 @@ class GithubOAuthentication(RemoteUserBackend):
                                     'Authorization': f'token {access_token}'})
             if response.ok:
                 json = response.json()
-                user, created = GithubOauthUser.objects.get_or_create(
+                user, created = GithubOauthUser.objects.update_or_create(
                     login=json['login'], defaults={'token': access_token, 'email': json['email']})
                 if created:
                     Watcher.objects.create(username=json['login'], owner=user)
-                # Profile.objects.update_or_create(
-                #     username=json['login'], defaults={'name': json['name']})
                 return user
         return None
 
-    def get_user(self, token):
+    def get_user(self, login):
         try:
-            return GithubOauthUser.objects.get(pk=token)
-        except Exception:
+            return GithubOauthUser.objects.get(pk=login)
+        except GithubOauthUser.DoesNotExist:
             return None

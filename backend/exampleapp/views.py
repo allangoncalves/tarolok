@@ -1,10 +1,10 @@
 from django.http import HttpResponseRedirect, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404, render, redirect
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from django.urls import reverse
 from django.utils import timezone
-from django.views import generic
+from django.views import generic, View
 from django.conf import settings
 from .models import Choice, Question
 import requests
@@ -12,18 +12,15 @@ import requests
 # Create your views here.
 
 
-class IndexView(generic.ListView):
+class IndexView(View):
     template_name = 'exampleapp/index.html'
-    context_object_name = 'latest_question_list'
 
-    def get_queryset(self):
-        """
-        Return the last five published questions (not including those set to be
-        published in the future).
-        """
-        return Question.objects.filter(
-            pub_date__lte=timezone.now()
-        ).order_by('-pub_date')[:5]
+    def get(self, request):
+        if request.user.is_authenticated:
+            props = {
+                'user': {'algo': 'algo'}
+            }
+            return render(request, self.template_name, {'props': props})
 
 
 class DetailView(generic.DetailView):
@@ -66,8 +63,9 @@ def github_callback(request):
     code = request.GET.get('code')
     user = authenticate(code=code)
     if user is not None:
-        return redirect("/exampleapp/")
-    return redirect("/exampleapp/test")
+        login(request, user)
+        return redirect("/monitor")
+    return redirect("/test")
 
 
 def vote(request, question_id):

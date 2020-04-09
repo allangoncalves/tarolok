@@ -19,8 +19,8 @@ class UserManager(BaseUserManager):
 
 class GithubUserManager(BaseUserManager):
 
-    def create_user(self, token, password=None, **kwargs):
-        user = self.model(token=token, **kwargs)
+    def create_user(self, login, password=None, **kwargs):
+        user = self.model(login=login, **kwargs)
         password = self.make_random_password(10)
         user.set_password(password)
         user.save(using=self._db)
