@@ -15,3 +15,13 @@ class UserManager(BaseUserManager):
         user.is_staff = True
         user.save(using=self._db)
         return user
+
+
+class GithubUserManager(BaseUserManager):
+
+    def create_user(self, token, password=None, **kwargs):
+        user = self.model(token=token, **kwargs)
+        password = self.make_random_password(10)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user

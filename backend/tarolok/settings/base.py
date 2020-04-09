@@ -22,16 +22,14 @@ DEBUG = True
 ADMINS = (("Admin", "foo@example.com"),
           ("Allan", "allanvgoncalves@gmail.com"),)
 
-# AUTH_USER_MODEL = "users.User"
+AUTH_USER_MODEL = "users.User"
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'github_oauth.authentication.GithubOAuthentication',
 ]
 
-PROFILE_DATA_URL = 'https://api.github.com/user'
-
-ALLOWED_HOSTS = ['tarolok.herokuapp.com']
+ALLOWED_HOSTS = ['cf773485.ngrok.io', 'localhost']
 
 INSTALLED_APPS = [
     "exampleapp.apps.ExampleappConfig",
@@ -44,9 +42,10 @@ INSTALLED_APPS = [
     "django_js_reverse",
     "webpack_loader",
     "import_export",
-    "common",
-    "github_oauth",
     "rest_framework",
+    "common",
+    "users",
+    "github_oauth",
     "api"
 ]
 
@@ -82,6 +81,11 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "tarolok.wsgi.application"
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 30
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator", },

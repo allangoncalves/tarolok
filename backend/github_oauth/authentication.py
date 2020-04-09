@@ -2,8 +2,10 @@ import requests
 from django.contrib.auth.backends import RemoteUserBackend
 
 from .conf import conf
-from .links import ACCESS_TOKEN_URL
-from .models import GithubOauthUser
+from .links import ACCESS_TOKEN_URL, PROFILE_DATA_URL
+from users.models import GithubOauthUser
+from api.models import Watcher
+# from api.models import Profile
 
 
 class GithubOAuthentication(RemoteUserBackend):
@@ -18,13 +20,19 @@ class GithubOAuthentication(RemoteUserBackend):
             ACCESS_TOKEN_URL, params=payload, headers=headers)
         if response.ok:
             json = response.json()
-            print(json)
             access_token = json['access_token']
-            user, created = GithubOauthUser.objects.get_or_create(
-                token=access_token)
-            return user if created else None
-        else:
-            return None
+            response = requests.get(PROFILE_DATA_URL, headers={
+                                    'Authorization': f'token {access_token}'})
+            if response.ok:
+                json = response.json()
+                user, created = GithubOauthUser.objects.get_or_create(
+                    login=json['login'], defaults={'token': access_token, 'email': json['email']})
+                if created:
+                    Watcher.objects.create(username=json['login'], owner=user)
+                # Profile.objects.update_or_create(
+                #     username=json['login'], defaults={'name': json['name']})
+                return user
+        return None
 
     def get_user(self, token):
         try:

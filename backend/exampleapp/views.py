@@ -54,6 +54,7 @@ def github_hooks(request):
     print(request.body)
     return HttpResponse("pong")
 
+
 @csrf_exempt
 def test(request):
     if(request.GET.get('login')):
@@ -65,12 +66,6 @@ def github_callback(request):
     code = request.GET.get('code')
     user = authenticate(code=code)
     if user is not None:
-        response = requests.get(settings.PROFILE_DATA_URL, headers={
-            'Accept': settings.GITHUB_ACCEPT_TYPE,
-            'Authorization': f'token {user.token}',
-        })
-        json = response.json()
-        username = json['login']
         return redirect("/exampleapp/")
     return redirect("/exampleapp/test")
 

@@ -1,27 +1,23 @@
 from rest_framework import serializers
-from api.models import Profile
+from api.models import Watcher, Repository, Commit
 
 
-class ProfileSerializer(serializers.ModelSerializer):
+class WatcherSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Profile
+        model = Watcher
+        exclude = ("owner",)
+
+
+class CommitSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Commit
+        exclude = ('repo',)
+
+
+class RepositorySerializer(serializers.ModelSerializer):
+    commits = CommitSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = Repository
         fields = "__all__"
-
-
-# class RepositorySerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Repository
-#         fields = "__all__"
-
-
-# class MessageSerializer(serializers.Serializer):
-#     message = serializers.CharField(max_length=255)
-
-
-# class CommitSerializer(serializers.ModelSerializer):
-#     commit = MessageSerializer(source="*")
-#     author = ProfileSerializer()
-
-#     class Meta:
-#         model = Commit
-#         fields = "__all__"

@@ -4,8 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from common.models import IndexedTimeStampedModel
 
-from .managers import UserManager
-
+from .managers import UserManager, GithubUserManager
 
 class User(AbstractBaseUser, PermissionsMixin, IndexedTimeStampedModel):
     email = models.EmailField(max_length=255, unique=True)
@@ -32,3 +31,16 @@ class User(AbstractBaseUser, PermissionsMixin, IndexedTimeStampedModel):
 
     def __str__(self):
         return self.email
+
+
+class GithubOauthUser(AbstractBaseUser):
+    login = models.CharField(max_length=100, primary_key=True)
+    token = models.CharField(max_length=100, null=False, blank=False)
+    email = models.EmailField()
+
+    objects = GithubUserManager()
+
+    USERNAME_FIELD = "login"
+
+    def __str__(self):
+        return self.login
