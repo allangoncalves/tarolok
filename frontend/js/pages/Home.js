@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Home = () => {
-  const [currentUser, setCurrentUser] = useState(window.$user.login);
+  const [currentUser, setCurrentUser] = useState(window.$user);
   const [showBugComponent, setShowBugComponent] = useState(false);
   const [trueOrFalse, setTrueOrFalse] = useState(false);
   const [nextPage, setNextPage] = useState(null);
@@ -29,15 +29,13 @@ const Home = () => {
   const { register, handleSubmit } = useForm();
 
   const addRepo = (username, repository) => {
-    return api
-      .post(`watchers/${currentUser}/repositories/`, {
-        full_name: `${username}@${repository}`,
-      })
+    return api.post(`watchers/${currentUser}/repositories/`, {
+      full_name: `${username}@${repository}`,
+    });
   };
 
   const getCommits = () => {
     api.get(`watchers/${currentUser}/commits/`).then((res) => {
-      console.log(res.data);
       setCommits(res.data.results);
     });
   };

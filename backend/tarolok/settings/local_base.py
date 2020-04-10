@@ -26,7 +26,7 @@ AUTH_PASSWORD_VALIDATORS = []  # allow easy passwords only on local
 
 GITHUB_CLIENT_ID = '0aa1739ced776d29bbe2'
 GITHUB_CLIENT_SECRET = '93a267bd671f49fddeb03699b5945f8ccf50ca9b'
-GITHUB_REDIRECT_URI = 'https://3457638c.ngrok.io/github/callback'
+GITHUB_REDIRECT_URI = 'https://b4d36975.ngrok.io/github/callback'
 GITHUB_SCOPES = "user, repo"
 GITHUB_ACCEPT_TYPE = 'application/json'
 

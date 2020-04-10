@@ -2,15 +2,15 @@ version: '3.1'
 
 services:
   db:
-    image: "postgres:alpine"
+    image: 'postgres:alpine'
     volumes:
       - .db:/var/lib/postgresql/data
 
   broker:
-    image: "rabbitmq:alpine"
+    image: 'rabbitmq:alpine'
 
   result:
-    image: "redis:alpine"
+    image: 'redis:alpine'
 
   frontend:
     build:
@@ -20,14 +20,14 @@ services:
       - .:/app/
       - /app/node_modules
     ports:
-      - "3000:3000"
+      - '3000:3000'
 
   backend:
     build:
       dockerfile: backend/Dockerfile
       context: .
     ports:
-      - "8000:8000"
+      - '8000:8000'
     volumes:
       - ./:/home/user/app/
     env_file: backend/.env

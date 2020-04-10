@@ -5,7 +5,6 @@ import datetime
 from .models import Watcher, Repository, Commit
 from .serializers import WatcherSerializer, RepositorySerializer, CommitSerializer
 
-from django.db import transaction
 
 import requests
 
@@ -14,7 +13,8 @@ COMMITS_URL = 'https://api.github.com/repos/{username}/{repository}/commits?per_
 
 # Create your views here.
 
-
+# from django.db import transaction
+#
 # @transaction.atomic
 # def create_commits(commits, repository):
 #     for commit in commits:

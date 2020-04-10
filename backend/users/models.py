@@ -56,3 +56,6 @@ class GithubOauthUser(AbstractBaseUser, PermissionsMixin, IndexedTimeStampedMode
 
     def __str__(self):
         return self.login
+
+    def get_login(self):
+        return self.login
