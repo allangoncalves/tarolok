@@ -8,6 +8,7 @@ import django_js_reverse.views
 
 urlpatterns = [
     path("admin/", admin.site.urls, name="admin"),
-    path("", include("exampleapp.urls"), name="exampleapp"),
     path("v1/api/", include(("api.urls", "api"), namespace="v1")),
+    path("github/", include("github_oauth.urls"), name="github"),
+    path("", include("exampleapp.urls"), name="exampleapp"),
 ]

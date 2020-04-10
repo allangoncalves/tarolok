@@ -5,7 +5,7 @@ DEBUG = True
 
 HOST = "http://localhost:8000"
 
-ALLOWED_HOSTS = ['2182acc6.ngrok.io']
+ALLOWED_HOSTS = ['*']
 
 SECRET_KEY = "secret"
 
@@ -24,9 +24,9 @@ STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
 AUTH_PASSWORD_VALIDATORS = []  # allow easy passwords only on local
 
-GITHUB_CLIENT_ID = '910d95794f82052d8662'
-GITHUB_CLIENT_SECRET = '972454f7ae7f46fc5af960a5ff5c266b370bb2bd'
-GITHUB_REDIRECT_URI = 'https://2182acc6.ngrok.io/github_callback'
+GITHUB_CLIENT_ID = '0aa1739ced776d29bbe2'
+GITHUB_CLIENT_SECRET = '93a267bd671f49fddeb03699b5945f8ccf50ca9b'
+GITHUB_REDIRECT_URI = 'https://3457638c.ngrok.io/github/callback'
 GITHUB_SCOPES = "user, repo"
 GITHUB_ACCEPT_TYPE = 'application/json'
 

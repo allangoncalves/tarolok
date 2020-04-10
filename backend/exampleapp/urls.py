@@ -1,11 +1,12 @@
-from django.urls import path
+from django.urls import path, re_path
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
 from . import views
 
 app_name = 'exampleapp'
+
 urlpatterns = [
-    path('monitor', views.IndexView.as_view(), name='index'),
-    path('hello', views.hello, name='hello'),
-    path('test', views.test, name='test'),
-    path('github_hooks', views.github_hooks, name='github_hooks'),
-    path('github_callback', views.github_callback, name='github_callback'),
+    path('login', views.IndexView.as_view(), name="login"),
+    re_path(r'.*', login_required(views.IndexView.as_view(),
+                                  login_url="/login"), name="redirect"),
 ]

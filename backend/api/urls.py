@@ -24,5 +24,4 @@ urlpatterns = [
     re_path(r'^', include(router.urls)),
     re_path(r'^', include(repository_router.urls)),
     re_path(r'^', include(commit_router.urls)),
-    # path("", lambda request : redirect("/exampleapp/")),
 ]
