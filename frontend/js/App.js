@@ -3,14 +3,18 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import { hot } from 'react-hot-loader/root';
 
 import Home from './pages/Home';
+import Login from './pages/Login';
 import SentryBoundary from './utils/SentryBoundary';
 
 const App = () => (
   <SentryBoundary>
     <Router>
       <Switch>
-        <Route path="/">
+        <Route exact path="/">
           <Home />
+        </Route>
+        <Route exact path="/login">
+          <Login />
         </Route>
       </Switch>
     </Router>

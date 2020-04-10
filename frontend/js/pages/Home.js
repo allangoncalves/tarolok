@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import Login from './Login';
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import api from '../services/api';
 import { makeStyles } from '@material-ui/core/styles';
@@ -15,10 +17,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const watcher = 'allangoncalves';
-
 const Home = () => {
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(window.$user.login);
   const [showBugComponent, setShowBugComponent] = useState(false);
   const [trueOrFalse, setTrueOrFalse] = useState(false);
   const [nextPage, setNextPage] = useState(null);
@@ -29,13 +29,15 @@ const Home = () => {
   const { register, handleSubmit } = useForm();
 
   const addRepo = (username, repository) => {
-    return api.post(`watchers/${watcher}/repositories/`, {
-      full_name: `${username}@${repository}`,
-    });
+    return api
+      .post(`watchers/${currentUser}/repositories/`, {
+        full_name: `${username}@${repository}`,
+      })
   };
 
-  const getCommits = (watcher) => {
-    api.get(`watchers/${watcher}/commits/`).then((res) => {
+  const getCommits = () => {
+    api.get(`watchers/${currentUser}/commits/`).then((res) => {
+      console.log(res.data);
       setCommits(res.data.results);
     });
   };
@@ -44,12 +46,11 @@ const Home = () => {
     const username = res.username;
     const repository = res.repository;
     addRepo(username, repository).then(() => {
-      getCommits(watcher);
+      getCommits();
     });
   };
   useEffect(() => {
-    setCurrentUser(window.$user);
-    getCommits(watcher);
+    getCommits();
   }, []);
 
   return (

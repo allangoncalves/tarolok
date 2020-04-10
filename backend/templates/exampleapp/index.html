@@ -2,9 +2,11 @@
 
 
 {% block body %}
+{% comment %} <div>{{ csrf_token }}</div {% endcomment %}
   <div id="react-app"></div>
   {{ props | json_script:"load-user" }}
   <script>
     window.$user = JSON.parse(document.getElementById('load-user').textContent);
+    
   </script>
 {% endblock %}

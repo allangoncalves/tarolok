@@ -19,6 +19,8 @@ SECURE_HSTS_PRELOAD = True
 
 DEBUG = True
 
+# LOGIN_URL = '/login'
+
 ADMINS = (("Admin", "foo@example.com"),
           ("Allan", "allanvgoncalves@gmail.com"),)
 

@@ -1,3 +1,4 @@
+from rest_framework.permissions import AllowAny
 from rest_framework import serializers
 from api.models import Watcher, Repository, Commit
 
@@ -17,6 +18,7 @@ class CommitSerializer(serializers.ModelSerializer):
 
 class RepositorySerializer(serializers.ModelSerializer):
     commits = CommitSerializer(read_only=True, many=True)
+    permission_classes = [AllowAny]
 
     class Meta:
         model = Repository
