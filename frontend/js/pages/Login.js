@@ -5,7 +5,9 @@ const Login = () => {
   return (
     <>
       <form method="get">
-        <Button name="login" value="click" type="submit">Allan</Button>
+        <Button name="login" value="click" type="submit">
+          Login
+        </Button>
       </form>
     </>
   );
