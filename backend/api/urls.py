@@ -5,15 +5,16 @@ from .views import WatcherViewSet, RepositoryViewSet, CommitViewSet
 from rest_framework_nested import routers
 
 router = routers.SimpleRouter()
+# One Level
 router.register(r'watchers', WatcherViewSet, basename='watchers')
-
-commit_router = routers.NestedSimpleRouter(
+watcher_router = routers.NestedSimpleRouter(
     router, r'watchers', lookup='watcher'
 )
-commit_router.register(
+watcher_router.register(
     r'commits', CommitViewSet, basename='watcher-commits'
 )
 
+# Two Levels
 repository_router = routers.NestedSimpleRouter(
     router, r'watchers', lookup='watcher')
 repository_router.register(
@@ -22,6 +23,7 @@ repository_router.register(
 
 urlpatterns = [
     re_path(r'^', include(router.urls)),
+    re_path(r'^', include(watcher_router.urls)),
     re_path(r'^', include(repository_router.urls)),
-    re_path(r'^', include(commit_router.urls)),
+
 ]
