@@ -5,12 +5,15 @@ import datetime
 from .models import Watcher, Repository, Commit
 from .serializers import WatcherSerializer, RepositorySerializer, CommitSerializer
 
+from django.conf import settings
 
 import requests
+import json
 
 
 COMMITS_URL = 'https://api.github.com/repos/{username}/{repository}/commits?per_page=100&since={since}'
 
+WEBHOOK_REGISTER_URL = 'https://api.github.com/repos/{full_name}/hooks'
 # Create your views here.
 
 # from django.db import transaction
@@ -25,6 +28,7 @@ COMMITS_URL = 'https://api.github.com/repos/{username}/{repository}/commits?per_
 #         }
 #         commit = Commit.objects.create(**valid_data)
 #         commit.save()
+
 
 def create_bulk(commits, repository):
     Commit.objects.bulk_create(
@@ -58,6 +62,21 @@ class RepositoryViewSet(viewsets.ModelViewSet):
         repository, created = Repository.objects.get_or_create(
             full_name=full_name)
         if created:
+            payload = {
+                'name': 'web',
+                'events': ['push'],
+                'active': True,
+                'config': {
+                    'url': f'{settings.HOST}/github/hooks',
+                    'content_type': 'json'
+                }
+            }
+            response = requests.post(
+                WEBHOOK_REGISTER_URL.format(
+                    full_name=full_name.replace('@', '/')),
+                data=json.dumps(payload),
+                headers={'Authorization': f'token {request.user.token}'}
+            )
             username, repo_name = full_name.split('@')
             response = requests.get(
                 COMMITS_URL.format(
