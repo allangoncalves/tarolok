@@ -17,7 +17,7 @@ function getCookie(name) {
 }
 
 const api = axios.create({
-  baseURL: 'https://tarolok.herokuapp.com',
+  baseURL: 'https://tarolok.herokuapp.com/v1/api',
 });
 
 api.interceptors.request.use(
