@@ -24,7 +24,7 @@ class Watcher(models.Model):
 
 class Commit(models.Model):
     sha = models.CharField(max_length=255, primary_key=True)
-    message = models.CharField(max_length=255, blank=True, null=False)
+    message = models.TextField()
     date = models.DateField()
     repo = models.ForeignKey(
         Repository, on_delete=models.CASCADE, related_name='commits')
