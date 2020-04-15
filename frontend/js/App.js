@@ -7,6 +7,14 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Repo from './pages/Repo';
 import SentryBoundary from './utils/SentryBoundary';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+
+const theme = createMuiTheme({
+  palette: {
+    primary: { main: '#1c7c8c' },
+    secondary: { main: '#eb8474' },
+  },
+});
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,22 +32,24 @@ const App = () => {
   const classes = useStyles();
   return (
     <SentryBoundary>
-      <Router>
-        <Switch>
-          <Route exact path="/">
-            <Home />
-          </Route>
-          <Route exact path="/login">
-            <Login />
-          </Route>
-          <Route path="/repos/:repoName">
-            <Repo />
-          </Route>
-          <Route>
-            <Home />
-          </Route>
-        </Switch>
-      </Router>
+      <ThemeProvider theme={theme}>
+        <Router>
+          <Switch>
+            <Route exact path="/">
+              <Home />
+            </Route>
+            <Route exact path="/login">
+              <Login />
+            </Route>
+            <Route path="/repos/:repoName">
+              <Repo />
+            </Route>
+            <Route>
+              <Home />
+            </Route>
+          </Switch>
+        </Router>
+      </ThemeProvider>
     </SentryBoundary>
   );
 };
