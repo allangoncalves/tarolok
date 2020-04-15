@@ -1,4 +1,5 @@
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import logout
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views import generic, View
 from django.conf import settings
@@ -14,9 +15,11 @@ class IndexView(View):
             if(request.GET.get('login')):
                 return redirect(f'https://github.com/login/oauth/authorize?client_id={settings.GITHUB_CLIENT_ID}&redirect_uri={settings.GITHUB_REDIRECT_URI}&scope={settings.GITHUB_SCOPES}')
             return render(request, self.template_name)
+        elif(request.GET.get('logout')):
+            logout(request)
+            return redirect('/login')
         else:
             props = {
                 'login': request.user.login
             }
             return render(request, self.template_name, {'props': props})
-
