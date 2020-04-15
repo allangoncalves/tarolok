@@ -48,6 +48,12 @@ class CommitViewSet(viewsets.ModelViewSet):
         return Commit.objects.select_related('repo').filter(repo__watcher=self.kwargs['watcher_pk'])
 
 
+class CommitFromRepoViewSet(viewsets.ModelViewSet):
+    serializer_class = CommitSerializer
+
+    def get_queryset(self):
+        return Commit.objects.filter(repo=self.kwargs['repo_pk'])
+
 class WatcherViewSet(viewsets.ModelViewSet):
     serializer_class = WatcherSerializer
     queryset = Watcher.objects.all()
