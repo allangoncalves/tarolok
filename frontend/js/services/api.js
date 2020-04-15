@@ -30,4 +30,32 @@ api.interceptors.request.use(
   }
 );
 
+export function getBucket(action) {
+  return api
+    .get(
+      `watchers/${action.currentUser}/commits/?page=${action.page + 1}&limit=${action.rowsPerPage}`
+    )
+    .then((response) => {
+      return { commits: response.data.results, count: response.data.count };
+    });
+}
+
+export function getCommitsFromRepo(action) {
+  return api
+    .get(`watchers/${action.currentUser}/repositories/${action.repoName}/`)
+    .then((response) => {
+      return { repoName: response.data.full_name, commits: response.data.commits };
+    });
+}
+
+export function addRepoCommits(action) {
+  return api
+    .post(`watchers/${action.currentUser}/repositories/`, {
+      full_name: action.repoName,
+    })
+    .then((response) => {
+      return response;
+    });
+}
+
 export default api;

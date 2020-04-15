@@ -1,88 +1,93 @@
 import React, { useState, useEffect } from 'react';
-import Login from './Login';
+import { connect } from 'react-redux';
+import { getBucket, setPage, setPageLimit, addCommitsFromRepo } from '../actions';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
-import api from '../services/api';
 import { makeStyles } from '@material-ui/core/styles';
-import { Grid, Container, TextField, Button } from '@material-ui/core/';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
-import TablePagination from '@material-ui/core/TablePagination';
+import {
+  Grid,
+  Container,
+  TextField,
+  Button,
+  Backdrop,
+  CircularProgress,
+  Paper,
+} from '@material-ui/core/';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TablePagination,
+} from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
   },
   paper: {
-    padding: theme.spacing(2),
     textAlign: 'center',
     color: theme.palette.text.secondary,
+    marginTop: theme.spacing(5),
+    marginBottom: theme.spacing(5),
   },
   table: {
     minWidth: 650,
+    minHeight: 400,
+  },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff',
   },
 }));
 
-const Home = () => {
-  const [currentUser, setCurrentUser] = useState(window.$user);
+const Home = ({
+  currentUser,
+  commits,
+  getBucket,
+  addCommitsFromRepo,
+  commitsCount,
+  rowsPerPage,
+  page,
+  setPage,
+  setPageLimit,
+  loading,
+}) => {
   const [showBugComponent, setShowBugComponent] = useState(false);
-  const [page, setPage] = useState(0);
-  const [nextPage, setNextPage] = useState();
-  const [previousPage, setPreviousPage] = useState();
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [commitsTotal, setTotal] = useState(0);
-  const [commits, setCommits] = useState([]);
   const classes = useStyles();
 
   const { register, handleSubmit } = useForm();
 
-  const addRepo = (username, repository) => {
-    return api.post(`watchers/${currentUser}/repositories/`, {
-      full_name: `${username}@${repository}`,
-    });
-  };
-
-  const getCommits = (currentUser, page, rowsPerPage) => {
-    api
-      .get(`watchers/${currentUser}/commits/?page=${page + 1}&limit=${rowsPerPage}`)
-      .then((res) => {
-        setCommits(res.data.results);
-        setTotal(res.data.count);
-        setNextPage(res.data.next);
-        setPreviousPage(res.data.previous);
-      });
-  };
+  const handleClose = () => {};
 
   const onSubmit = (res) => {
     const username = res.username;
     const repository = res.repository;
-    addRepo(username, repository).then(() => {
-      getCommits(currentUser, page, rowsPerPage);
-    });
+    addCommitsFromRepo(currentUser, `${username}@${repository}`);
   };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
-    getCommits(currentUser, newPage, rowsPerPage);
+    getBucket(currentUser, newPage, rowsPerPage);
   };
   const handleChangeRowsPerPage = (event) => {
     const rowsPerPage = parseInt(event.target.value, 10);
-    setRowsPerPage(rowsPerPage);
+    setPageLimit(rowsPerPage);
     setPage(0);
-    getCommits(currentUser, page, rowsPerPage);
+    getBucket(currentUser, 0, rowsPerPage);
   };
 
   useEffect(() => {
-    getCommits(currentUser, page, rowsPerPage);
+    getBucket(currentUser, 0, rowsPerPage);
   }, []);
 
   return (
     <>
+      <Backdrop className={classes.backdrop} open={loading} onClick={handleClose}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <Container maxWidth="xl" style={{ marginTop: 20 }}>
         <form
           className={classes.root}
@@ -116,40 +121,42 @@ const Home = () => {
             </Grid>
           </Grid>
         </form>
-        <TableContainer component={Paper}>
-          <Table className={classes.table} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Repository name</TableCell>
-                <TableCell align="left"> Message</TableCell>
-                <TableCell align="left">Hash</TableCell>
-                <TableCell align="center">Date</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {commits.map((commit) => (
-                <TableRow key={commit.sha}>
-                  <TableCell component="th" scope="row">
-                    <Link to={`repos/${commit.repo}`}>{commit.repo.replace('@', '/')}</Link>
-                  </TableCell>
-                  <TableCell align="left">{commit.message}</TableCell>
-                  <TableCell align="left">{commit.sha}</TableCell>
-                  <TableCell align="center">{commit.date}</TableCell>
+        <Paper className={classes.paper}>
+          <TableContainer component={Paper}>
+            <Table className={classes.table} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Repository name</TableCell>
+                  <TableCell align="left"> Message</TableCell>
+                  <TableCell align="left">Hash</TableCell>
+                  <TableCell align="center">Date</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          labelRowsPerPage="Repos per page"
-          rowsPerPageOptions={[5, 10, 25, 50, 100]}
-          component="div"
-          count={commitsTotal}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
+              </TableHead>
+              <TableBody>
+                {commits.map((commit) => (
+                  <TableRow key={commit.sha}>
+                    <TableCell component="th" scope="row">
+                      <Link to={`repos/${commit.repo}`}>{commit.repo.replace('@', '/')}</Link>
+                    </TableCell>
+                    <TableCell align="left">{commit.message}</TableCell>
+                    <TableCell align="left">{commit.sha}</TableCell>
+                    <TableCell align="center">{commit.date}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            labelRowsPerPage="Repos per page"
+            rowsPerPageOptions={[5, 10, 25, 50, 100]}
+            component="div"
+            count={commitsCount}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onChangePage={handleChangePage}
+            onChangeRowsPerPage={handleChangeRowsPerPage}
+          />
+        </Paper>
       </Container>
 
       {showBugComponent && showBugComponent.field.notexist}
@@ -157,4 +164,36 @@ const Home = () => {
   );
 };
 
-export default Home;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getBucket: (currentUser, page, rowsPerPage) => {
+      console.log('eae');
+      dispatch(getBucket({ currentUser, page, rowsPerPage }));
+    },
+    addCommitsFromRepo: (currentUser, repoName) => {
+      console.log('getfromrepo');
+      dispatch(addCommitsFromRepo({ currentUser, repoName }));
+    },
+    setPage: (page) => {
+      console.log('setpage');
+      dispatch(setPage({ page }));
+    },
+    setPageLimit: (limit) => {
+      console.log('setlimit');
+      dispatch(setPageLimit({ limit }));
+    },
+  };
+};
+
+const mapStateToProps = (state) => {
+  return {
+    currentUser: state.currentUser,
+    commits: state.commits,
+    commitsCount: state.commitsCount,
+    page: state.page,
+    rowsPerPage: state.rowsPerPage,
+    loading: state.loading,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

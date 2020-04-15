@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from 'react';
+import { getCommitsFromRepo } from '../actions';
+import { connect } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import api from '../services/api';
 import { Divider, Fab, Icon } from '@material-ui/core';
 
-const Repo = () => {
+const Repo = ({ repository, getCommitsFromRepo }) => {
   let { repoName } = useParams();
   const [currentUser, setCurrentUser] = useState(window.$user);
-  const [commits, setCommits] = useState([]);
   useEffect(() => {
-    api.get(`watchers/${currentUser}/repositories/${repoName}/`).then((res) => {
-      console.log(res.data.commits);
-      setCommits(res.data.commits);
-    });
+    getCommitsFromRepo(currentUser, repoName);
   }, []);
   return (
     <div>
@@ -20,7 +18,7 @@ const Repo = () => {
         <Icon>angle_left</Icon>
       </Fab>
       <ul>
-        {commits.map((commit) => (
+        {repository.commits.map((commit) => (
           <li key={commit.sha}>{commit.message}</li>
         ))}
       </ul>
@@ -28,4 +26,15 @@ const Repo = () => {
   );
 };
 
-export default Repo;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getCommitsFromRepo: (currentUser, repoName) => {
+      dispatch(getCommitsFromRepo({ currentUser, repoName }));
+    },
+  };
+};
+const mapStateToProps = (state) => {
+  return { repository: state.repository };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Repo);
