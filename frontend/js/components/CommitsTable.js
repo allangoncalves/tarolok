@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     textAlign: 'center',
     color: theme.palette.text.secondary,
-    marginTop: theme.spacing(5),
+    marginTop: theme.spacing(3),
     marginBottom: theme.spacing(10),
   },
   table: {
@@ -42,6 +42,7 @@ const CommitsTable = ({
   rowsPerPage,
   handleChangePage,
   handleChangeRowsPerPage,
+  hideRepoName,
 }) => {
   const classes = useStyles();
   return (
@@ -49,7 +50,7 @@ const CommitsTable = ({
       <Table className={classes.table} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Full name</TableCell>
+            {!hideRepoName && <TableCell>Full name</TableCell>}
             <TableCell align="left"> Message</TableCell>
             <TableCell align="left">Hash</TableCell>
             <TableCell align="center">Date</TableCell>
@@ -58,9 +59,13 @@ const CommitsTable = ({
         <TableBody>
           {commits.map((commit) => (
             <TableRow key={commit.sha} hover={true}>
-              <TableCell component="th" scope="row">
-                <Link to={`/${commit.repo}`}>{commit.repo.replace('@', '/')}</Link>
-              </TableCell>
+              {!hideRepoName && (
+                <TableCell component="th" scope="row">
+                  <Link style={{ color: '#1c7c8c' }} to={`/${commit.repo}`}>
+                    {commit.repo.replace('@', '/')}
+                  </Link>
+                </TableCell>
+              )}
               <TableCell align="left">
                 <Typography variant="body2" className={classes.message}>
                   {commit.message}

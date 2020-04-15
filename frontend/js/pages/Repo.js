@@ -19,7 +19,7 @@ const Repo = ({ repository, getCommitsFromRepo, currentUser }) => {
     const rowsPerPage = parseInt(event.target.value, 10);
     setRowsPerPage(rowsPerPage);
     setPage(0);
-    getCommitsFromRepo(currentUser, 0, rowsPerPage);
+    getCommitsFromRepo(currentUser, repoName, 0, rowsPerPage);
   };
 
   useEffect(() => {
@@ -28,7 +28,7 @@ const Repo = ({ repository, getCommitsFromRepo, currentUser }) => {
 
   return (
     <>
-      <Typography variant="body1" align="center" justify="center">
+      <Typography variant="h5" align="center" justify="center">
         {`All commits from ${repoName}`}
       </Typography>
       <CommitsTable
@@ -38,6 +38,7 @@ const Repo = ({ repository, getCommitsFromRepo, currentUser }) => {
         commitsCount={repository.commitsCount}
         handleChangePage={handleChangePage}
         handleChangeRowsPerPage={handleChangeRowsPerPage}
+        hideRepoName={true}
       />
     </>
   );

@@ -15,7 +15,8 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#1d7a8c',
   },
   card: {
-    minWidth: 400,
+    maxWidth: 400,
+    width: 400,
     minHeight: 400,
     padding: theme.spacing(4),
     display: 'flex',
@@ -46,11 +47,14 @@ const Login = () => {
         <div>
           <Paper elevation={1} className={classes.card}>
             <div>
-              <Typography variant="h5" component="h2">
-                Tarolok
-              </Typography>
-              <Typography className={classes.pos} color="textSecondary">
+              <Typography variant="h4">Tarolok</Typography>
+              <Typography variant="h6" className={classes.pos} color="textSecondary">
                 Repository monitor
+              </Typography>
+            </div>
+            <div>
+              <Typography variant="body1" className={classes.pos} color="textSecondary">
+                Tarolok creates a bucket for you to insert commits and monitor any public Github repository.
               </Typography>
             </div>
             <form method="get">
