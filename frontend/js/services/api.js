@@ -42,9 +42,12 @@ export function getBucket(action) {
 
 export function getCommitsFromRepo(action) {
   return api
-    .get(`watchers/${action.currentUser}/repositories/${action.repoName}/`)
+    .get(
+      `watchers/${action.currentUser}/repositories/${action.repoName}/commits/?page=${action.page +
+        1}&limit=${action.rowsPerPage}`
+    )
     .then((response) => {
-      return { repoName: response.data.full_name, commits: response.data.commits };
+      return { commits: response.data.results, commitsCount: response.data.count };
     });
 }
 

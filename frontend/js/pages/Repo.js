@@ -1,40 +1,57 @@
 import React, { useEffect, useState } from 'react';
+import CommitsTable from '../components/CommitsTable';
 import { getCommitsFromRepo } from '../actions';
 import { connect } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import api from '../services/api';
-import { Divider, Fab, Icon } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 
-const Repo = ({ repository, getCommitsFromRepo }) => {
+const Repo = ({ repository, getCommitsFromRepo, currentUser }) => {
   let { repoName } = useParams();
-  const [currentUser, setCurrentUser] = useState(window.$user);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+    getCommitsFromRepo(currentUser, repoName, newPage, rowsPerPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    const rowsPerPage = parseInt(event.target.value, 10);
+    setRowsPerPage(rowsPerPage);
+    setPage(0);
+    getCommitsFromRepo(currentUser, 0, rowsPerPage);
+  };
+
   useEffect(() => {
-    getCommitsFromRepo(currentUser, repoName);
+    getCommitsFromRepo(currentUser, repoName, page, rowsPerPage);
   }, []);
+
   return (
-    <div>
-      <p>{repoName.replace('@', '/')}</p>
-      <Fab>
-        <Icon>angle_left</Icon>
-      </Fab>
-      <ul>
-        {repository.commits.map((commit) => (
-          <li key={commit.sha}>{commit.message}</li>
-        ))}
-      </ul>
-    </div>
+    <>
+      <Typography variant="body1" align="center" justify="center">
+        {`All commits from ${repoName}`}
+      </Typography>
+      <CommitsTable
+        commits={repository.commits}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        commitsCount={repository.commitsCount}
+        handleChangePage={handleChangePage}
+        handleChangeRowsPerPage={handleChangeRowsPerPage}
+      />
+    </>
   );
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getCommitsFromRepo: (currentUser, repoName) => {
-      dispatch(getCommitsFromRepo({ currentUser, repoName }));
+    getCommitsFromRepo: (currentUser, repoName, page, rowsPerPage) => {
+      dispatch(getCommitsFromRepo({ currentUser, repoName, page, rowsPerPage }));
     },
   };
 };
 const mapStateToProps = (state) => {
-  return { repository: state.repository };
+  return { repository: state.repository, currentUser: state.currentUser };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Repo);

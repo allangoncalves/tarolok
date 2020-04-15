@@ -18,8 +18,8 @@ const initialState = {
   rowsPerPage: 10,
   loading: false,
   repository: {
-    name: '',
     commits: [],
+    commitsCount: 0,
   },
 };
 
@@ -47,13 +47,15 @@ function rootReducer(state = initialState, action) {
     }
     case GET_COMMITS_FROM_REPO_SUCCESS: {
       return Object.assign({}, state, {
-        repository: { name: action.payload.repoName, commits: action.payload.commits },
+        repository: {
+          commits: action.payload.commits,
+          commitsCount: action.payload.commitsCount,
+        },
+        loading: false,
       });
     }
     case ADD_COMMITS_FROM_REPO_SUCCESS: {
       // cascading to the next
-      console.log('caiu aqui siim');
-      console.log(action);
     }
     case GET_ALL_COMMITS_SUCCESS: {
       return Object.assign({}, state, {

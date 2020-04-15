@@ -5,7 +5,6 @@ import { hot } from 'react-hot-loader/root';
 
 import Home from './pages/Home';
 import Login from './pages/Login';
-import Repo from './pages/Repo';
 import SentryBoundary from './utils/SentryBoundary';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
@@ -40,9 +39,6 @@ const App = () => {
             </Route>
             <Route exact path="/login">
               <Login />
-            </Route>
-            <Route path="/repos/:repoName">
-              <Repo />
             </Route>
             <Route>
               <Home />
