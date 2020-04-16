@@ -37,7 +37,6 @@ from .managers import UserManager, GithubUserManager
 class GithubOauthUser(AbstractBaseUser, PermissionsMixin, IndexedTimeStampedModel):
     login = models.CharField(max_length=100, primary_key=True)
     token = models.CharField(max_length=100, null=False, blank=False)
-    email = models.EmailField()
 
     is_staff = models.BooleanField(
         default=False, help_text=_("Designates whether the user can log into this admin " "site.")

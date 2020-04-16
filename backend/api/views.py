@@ -15,22 +15,20 @@ COMMITS_URL = 'https://api.github.com/repos/{username}/{repository}/commits?per_
 
 WEBHOOK_REGISTER_URL = 'https://api.github.com/repos/{full_name}/hooks'
 
-WEBHOOB_PAYLOAD = {
-    'name': 'web',
-    'events': ['push'],
-    'active': True,
-    'config': {
-        'url': f'{settings.HOST}/github/hooks',
-        'content_type': 'json'
-    }
-}
-
 
 def register_webhook(full_name, token):
     response = requests.post(
         WEBHOOK_REGISTER_URL.format(
             full_name=full_name.replace('@', '/')),
-        data=json.dumps(WEBHOOB_PAYLOAD),
+        data=json.dumps({
+            'name': 'web',
+            'events': ['push'],
+            'active': True,
+            'config': {
+                'url': f'{settings.HOST}/github/hooks',
+                'content_type': 'json'
+            }
+        }),
         headers={'Authorization': f'token {token}'}
     )
     return response.ok
@@ -57,7 +55,6 @@ def get_commits_from_repo(full_name):
             ).isoformat()
         )
     )
-
     return response
 
 
@@ -107,7 +104,7 @@ class RepositoryViewSet(viewsets.ModelViewSet):
                 create_bulk(initial_commits, repository)
                 handle_commits_pagination(response, repository)
             if repository in watcher.repositories.all():
-                return Response({'message': 'Repository was already added.'}, status.HTTP_404_NOT_FOUND)
+                return Response({'message': 'Repository was already added.'}, status.HTTP_409_CONFLICT)
             watcher.repositories.add(repository)
             serializer = RepositorySerializer(repository)
             return Response(serializer.data)

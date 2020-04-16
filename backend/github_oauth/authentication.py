@@ -25,7 +25,7 @@ class GithubOAuthentication(RemoteUserBackend):
             if response.ok:
                 json = response.json()
                 user, created = GithubOauthUser.objects.update_or_create(
-                    login=json['login'], defaults={'token': access_token, 'email': json['email']})
+                    login=json['login'], defaults={'token': access_token})
                 if created:
                     Watcher.objects.create(username=json['login'], owner=user)
                 return user

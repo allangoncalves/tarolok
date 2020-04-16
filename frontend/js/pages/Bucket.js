@@ -25,8 +25,12 @@ import {
 } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
+  mainDiv: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: '80vh',
   },
   form: {
     padding: theme.spacing(4),
@@ -85,7 +89,7 @@ const Bucket = ({
   }, []);
   return (
     <>
-      <div>
+      <div className={classes.mainDiv}>
         <Typography variant="h5" align="center">
           {'Add as many Github repositories as you want to'}
         </Typography>
@@ -125,54 +129,56 @@ const Bucket = ({
             </Grid>
           </Grid>
         </form>
+        {commits.length > 0 && (
+          <CommitsTable
+            commits={commits}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            commitsCount={commitsCount}
+            handleChangePage={handleChangePage}
+            handleChangeRowsPerPage={handleChangeRowsPerPage}
+          />
+        )}
+        <Snackbar
+          ContentProps={{
+            classes: {
+              root: classes.errorSnackbar,
+            },
+          }}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          variant="error"
+          key={`bottom, center`}
+          open={error != ''}
+          onClose={handleClose}
+          message={error}
+          autoHideDuration={4000}
+          component={SnackbarContent}
+          action={
+            <IconButton color="primary" component="span" onClick={() => handleClose()}>
+              <CloseIcon />
+            </IconButton>
+          }
+        />
+        <Snackbar
+          ContentProps={{
+            classes: {
+              root: classes.successfulSnackbar,
+            },
+          }}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          key={`top, center`}
+          open={message != ''}
+          onClose={handleClose}
+          message={message}
+          autoHideDuration={4000}
+          component={SnackbarContent}
+          action={
+            <IconButton color="secondary" component="span" onClick={() => handleClose()}>
+              <CloseIcon />
+            </IconButton>
+          }
+        />
       </div>
-      <CommitsTable
-        commits={commits}
-        page={page}
-        rowsPerPage={rowsPerPage}
-        commitsCount={commitsCount}
-        handleChangePage={handleChangePage}
-        handleChangeRowsPerPage={handleChangeRowsPerPage}
-      />
-      <Snackbar
-        ContentProps={{
-          classes: {
-            root: classes.errorSnackbar,
-          },
-        }}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        variant="error"
-        key={`bottom, center`}
-        open={error != ''}
-        onClose={handleClose}
-        message={error}
-        autoHideDuration={4000}
-        component={SnackbarContent}
-        action={
-          <IconButton color="primary" component="span" onClick={() => handleClose()}>
-            <CloseIcon />
-          </IconButton>
-        }
-      />
-      <Snackbar
-        ContentProps={{
-          classes: {
-            root: classes.successfulSnackbar,
-          },
-        }}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        key={`top, center`}
-        open={message != ''}
-        onClose={handleClose}
-        message={message}
-        autoHideDuration={4000}
-        component={SnackbarContent}
-        action={
-          <IconButton color="secondary" component="span" onClick={() => handleClose()}>
-            <CloseIcon />
-          </IconButton>
-        }
-      />
     </>
   );
 };
