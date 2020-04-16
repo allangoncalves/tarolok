@@ -58,6 +58,9 @@ export function addRepoCommits(action) {
     })
     .then((response) => {
       return response;
+    })
+    .catch((response) => {
+      return Promise.reject(response.response.data.message);
     });
 }
 

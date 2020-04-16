@@ -1,10 +1,28 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { getBucket, setPage, setPageLimit, addCommitsFromRepo } from '../actions';
+import {
+  getBucket,
+  setPage,
+  setPageLimit,
+  addCommitsFromRepo,
+  removeErrorMessage,
+  showErrorMessage,
+  showSuccessfulMessage,
+  removeSuccessfulMessage,
+} from '../actions';
 import { makeStyles } from '@material-ui/core/styles';
 import { useForm, Controller } from 'react-hook-form';
 import CommitsTable from '../components/CommitsTable';
-import { Typography, Paper, Grid, TextField, Button } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
+import {
+  Typography,
+  Grid,
+  TextField,
+  Button,
+  Snackbar,
+  SnackbarContent,
+  IconButton,
+} from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -12,6 +30,12 @@ const useStyles = makeStyles((theme) => ({
   },
   form: {
     padding: theme.spacing(4),
+  },
+  errorSnackbar: {
+    background: '#eb8474',
+  },
+  successfulSnackbar: {
+    background: '#00233a',
   },
 }));
 
@@ -25,6 +49,11 @@ const Bucket = ({
   setPage,
   setPageLimit,
   addCommitsFromRepo,
+  removeErrorMessage,
+  showErrorMessage,
+  error,
+  removeSuccessfulMessage,
+  message,
 }) => {
   const classes = useStyles();
   const { register, handleSubmit } = useForm();
@@ -41,7 +70,15 @@ const Bucket = ({
   const onSubmit = (res) => {
     const username = res.username;
     const repository = res.repository;
-    addCommitsFromRepo(currentUser, `${username}@${repository}`);
+    if (username != '' && repository != '') {
+      addCommitsFromRepo(currentUser, `${username}@${repository}`);
+    } else {
+      showErrorMessage('Please enter a username and a repository');
+    }
+  };
+  const handleClose = () => {
+    removeSuccessfulMessage();
+    removeErrorMessage();
   };
   useEffect(() => {
     getBucket(currentUser, 0, rowsPerPage);
@@ -97,6 +134,45 @@ const Bucket = ({
         handleChangePage={handleChangePage}
         handleChangeRowsPerPage={handleChangeRowsPerPage}
       />
+      <Snackbar
+        ContentProps={{
+          classes: {
+            root: classes.errorSnackbar,
+          },
+        }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        variant="error"
+        key={`bottom, center`}
+        open={error != ''}
+        onClose={handleClose}
+        message={error}
+        autoHideDuration={4000}
+        component={SnackbarContent}
+        action={
+          <IconButton color="primary" component="span" onClick={() => handleClose()}>
+            <CloseIcon />
+          </IconButton>
+        }
+      />
+      <Snackbar
+        ContentProps={{
+          classes: {
+            root: classes.successfulSnackbar,
+          },
+        }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        key={`top, center`}
+        open={message != ''}
+        onClose={handleClose}
+        message={message}
+        autoHideDuration={4000}
+        component={SnackbarContent}
+        action={
+          <IconButton color="secondary" component="span" onClick={() => handleClose()}>
+            <CloseIcon />
+          </IconButton>
+        }
+      />
     </>
   );
 };
@@ -115,6 +191,18 @@ const mapDispatchToProps = (dispatch) => {
     setPageLimit: (limit) => {
       dispatch(setPageLimit({ limit }));
     },
+    removeErrorMessage: () => {
+      dispatch(removeErrorMessage());
+    },
+    showErrorMessage: (message) => {
+      dispatch(showErrorMessage({ message }));
+    },
+    showSuccessfulMessage: (message) => {
+      dispatch(showSuccessfulMessage({ message }));
+    },
+    removeSuccessfulMessage: () => {
+      dispatch(removeSuccessfulMessage());
+    },
   };
 };
 
@@ -126,6 +214,8 @@ const mapStateToProps = (state) => {
     page: state.page,
     rowsPerPage: state.rowsPerPage,
     loading: state.loading,
+    error: state.error,
+    message: state.message,
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Bucket);
